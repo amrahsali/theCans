@@ -32,7 +32,7 @@ class BookingResponse {
 
 class BookingData {
   final int id;
-  final int spaceId;
+// final int spaceId;
   final String bId;
   final String bookingType;
   final String startDate;
@@ -43,7 +43,7 @@ class BookingData {
   final String? startTime;
   final String? endTime;
   final String totalPrice;
-  final String isConfirmed;
+  final int isConfirmed;
   final String location;
   final String createdAt;
   final String updatedAt;
@@ -52,7 +52,7 @@ class BookingData {
 
   BookingData({
     required this.id,
-    required this.spaceId,
+   // required this.spaceId,
     required this.bId,
     required this.bookingType,
     required this.startDate,
@@ -75,7 +75,7 @@ class BookingData {
   factory BookingData.fromJson(Map<String, dynamic> json) {
     return BookingData(
       id: json['id'] ?? 0,
-      spaceId: json['space_id'] ?? 0,
+      //spaceId: json['space_id'] ?? 0,
       bId: json['b_id'] ?? '',
       bookingType: json['booking_type'] ?? '',
       startDate: json['start_date'] ?? '',
@@ -86,7 +86,7 @@ class BookingData {
       startTime: json['start_time'],
       endTime: json['end_time'],
       totalPrice: json['total_price'] ?? '',
-      isConfirmed: json['is_confirmed'] ?? '',
+      isConfirmed: json['is_confirmed'] ?? 0,
       location: json['location'] ?? '',
       createdAt: json['created_at'] ?? '',
       updatedAt: json['updated_at'] ?? '',
@@ -99,7 +99,7 @@ class BookingData {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'space_id': spaceId,
+      //'space_id': spaceId,
       'b_id': bId,
       'booking_type': bookingType,
       'start_date': startDate,
@@ -142,7 +142,7 @@ class AllBookingResponse{
 }}
 
 class Space {
-  final int id;
+ // final int id;
   final String name;
   final String image;
   final String description;
@@ -162,7 +162,7 @@ class Space {
   final String updatedAt;
 
   Space({
-    required this.id,
+    //required this.id,
     required this.name,
     required this.image,
     required this.description,
@@ -185,7 +185,7 @@ class Space {
   // Factory method to create a Space object from JSON
   factory Space.fromJson(Map<String, dynamic> json) {
     return Space(
-      id: json['id'] ?? 0,
+      //id: json['id'] ?? 0,
       name: json['name'] ?? '',
       image: json['image'] ?? '',
       description: json['description'] ?? '',
@@ -209,7 +209,7 @@ class Space {
   // Method to convert a Space object to JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+    //  'id': id,
       'name': name,
       'image': image,
       'description': description,

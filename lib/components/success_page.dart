@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:scan/model/verify_model.dart';
 import '../common/app_colors.dart';
-import 'background.dart';
 
 class SuccessPage extends StatefulWidget {
-  final String name;
-  final String phone;
-  final String email;
-  final String date;
-  final String startTime;
-  final String endTime;
-  final String spaceName;
+  final BookingData bookingData;
 
   const SuccessPage({
-    required this.name,
-    required this.phone,
-    required this.email,
-    required this.date,
-    required this.startTime,
-    required this.endTime,
-    required this.spaceName,
+    required this.bookingData,
     Key? key,
   }) : super(key: key);
 
@@ -27,65 +15,73 @@ class SuccessPage extends StatefulWidget {
 }
 
 class _SuccessPageState extends State<SuccessPage> {
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-    child:  Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      mainAxisSize: MainAxisSize.min, // Minimize size for dialog
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          widget.name,
+          widget.bookingData.customerFirstName,
           style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: kcSecondaryColor),
         ),
+        SizedBox(height: 8),
         Text(
-          widget.phone,
+          widget.bookingData.customerPhone,
           style: const TextStyle(
             fontSize: 14,
             color: kcWhiteColor,
           ),
         ),
+        SizedBox(height: 8),
         Text(
-          widget.email,
+          widget.bookingData.customerEmail,
           style: const TextStyle(
             fontSize: 14,
             color: kcWhiteColor,
           ),
         ),
+        SizedBox(height: 8),
         Text(
-          widget.date,
+          widget.bookingData.space?.name ?? '',
           style: const TextStyle(
             fontSize: 14,
             color: kcWhiteColor,
           ),
         ),
-        Text(
-          widget.startTime,
-          style: const TextStyle(
+        SizedBox(height: 8),
+    Text(
+    (switch (widget.bookingData.isConfirmed) {
+    (0) => 'Not Confirmed',
+    (1) => 'Confirmed',
+    (2) => 'Checked In',
+    (3) => 'Checked Out',
+    _ => 'Not Confirmed',
+    }),
+      style:  TextStyle(
             fontSize: 14,
             color: kcWhiteColor,
           ),
         ),
-        Text(
-          widget.endTime,
-          style: const TextStyle(
-            fontSize: 14,
-            color: kcWhiteColor,
-          ),
-        ),
-        Text(
-          widget.spaceName,
-          style: const TextStyle(
-            fontSize: 14,
-            color: kcWhiteColor,
-          ),
-        ),
-
       ],
-    ),
     );
   }
 }
+
+
+
+// enum Confirmation {
+//   confirmed(0, 'Confirmed'),
+//   notConfirmed(1, 'Not Confirmed'),
+//   checkedIn(2, 'Checked In'),
+//   checkedOut(3, 'Checked Out');
+//
+//   final int status;
+//   final String label;
+//
+//   const Confirmation(this.status, this.label);
+// }

@@ -1,19 +1,22 @@
-import 'dart:js';
+import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scan/model/verify_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stacked/stacked.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:http/http.dart' as http;
 
+import '../../components/success_page.dart';
 import '../../network/api_services.dart';
-import 'BookingdetailsScreen.dart';
 
 class DashboardViewModel extends BaseViewModel {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   Barcode? result;
+
+  BookingResponse? response;
 
   int _currentIndex = 0;
   int get currentIndex => _currentIndex;
@@ -51,62 +54,30 @@ class DashboardViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  // void onQRViewCreated(QRViewController controller) {
-  //   this.controller = controller;
-  //   controller.scannedDataStream.listen((scanData) async {
-  //     result = scanData;
-  //     final code = result!.code!.split('/').last;
-  //     debugPrint('QR Code: ${code}');
-  //     if (result != null) {
-  //       controller.pauseCamera();
-  //       setBusy(true);
-  //       SharedPreferences prefs = await SharedPreferences.getInstance();
-  //       final token = prefs.getString('token');
-  //
-  //       ApiService.verifyBooking(code, token!).then((value) => {
-  //             debugPrint('Response: ${value}'),
-  //           });
-  //     }
-  //   });
-  // }
-
-
-
-  void onQRViewCreated(QRViewController controller, context) {
+ void onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) async {
       result = scanData;
       final code = result!.code!.split('/').last;
       debugPrint('QR Code: ${code}');
+      debugPrint('QR Code: ${result!.code}');
+
       if (result != null) {
         controller.pauseCamera();
         setBusy(true);
         SharedPreferences prefs = await SharedPreferences.getInstance();
         final token = prefs.getString('token');
 
-        try {
-          final response = await ApiService.verifyBooking(code, token!);
-          debugPrint('Response: ${response}');
-
-          // Navigate to a details screen and pass the booking data
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => BookingDetailsScreen(bookingData: response['data'])
-              )
-          );
-        } catch (e) {
-          // Handle error
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Booking verification failed'))
-          );
-        } finally {
-          setBusy(false);
+       response =  await  ApiService.verifyBooking(code, token!);
+        Navigator.of(qrKey.currentContext!).pop();
+        if (response != null) {
+        setBusy(false);
+        notifyListeners();
         }
+
       }
     });
   }
-
 
 
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:scan/common/app_colors.dart';
+import 'package:scan/components/success_page.dart';
 import 'package:stacked/stacked.dart';
 import '../../components/submit_button.dart';
 import '../bookings/bookings_view.dart';
@@ -158,7 +159,20 @@ class DashboardView extends StackedView<DashboardViewModel> {
         );
       },
     ).then((_) async {
-      // Handle post-dialog logic if needed
+      if(viewModel.response != null) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return Dialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SuccessPage(bookingData: viewModel.response!.data!),
+              ),
+            );
+          },
+        );
+      }
     });
   }
 

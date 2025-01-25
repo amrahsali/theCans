@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:scan/common/app_colors.dart';
 import 'package:scan/network/api_services.dart';
 import 'package:scan/ui/auth/auth_viewmodel.dart';
+import 'package:scan/ui/dashboard/dashboard_view.dart';
 import 'package:scan/ui/startup/startup_view.dart';
-
-void main() {
+import 'package:shared_preferences/shared_preferences.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   ApiService.init();
   setupLocator();
 
@@ -14,64 +16,39 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: kcPrimaryColor),
-        useMaterial3: true,
-      ),
-      home: const StartupView(),
-    );
-  }
-}
+  Future<Widget> _getInitialView() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+    // If a token exists, navigate to the Dashboard, otherwise go to Login
+    return token != null ?  DashboardView() : const StartupView();
+    //return StartupView();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+    return FutureBuilder<Widget>(
+      future: _getInitialView(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const MaterialApp(
+            home: Scaffold(
+              body: Center(child: CircularProgressIndicator()),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          );
+        } else {
+          return MaterialApp(
+            title: 'theCans App',
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: kcPrimaryColor),
+              useMaterial3: true,
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+            home: snapshot.data,
+          );
+        }
+      },
     );
   }
 }
+
+
